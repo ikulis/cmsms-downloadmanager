@@ -906,9 +906,9 @@ class DownloadManager extends CMSModule
 	if(!$FEU->LoggedIn())	return false;
 
 	$userid = $FEU->LoggedInId();
-	$usergroups = explode(',',$FEU->GetMemberGroups($userid));
 	$groups = $FEU->GetGroupList();
 	$filegroups = $this->GetFileGroups($file_id);
+	$usergroups = $FEU->GetMemberGroupsArray($userid);
 	
 	// check if any group is needed to access
 	if(empty($filegroups))
@@ -919,7 +919,11 @@ class DownloadManager extends CMSModule
 	$i = 0;
 	while(!$hasperm && $i < count($usergroups))
 	{
-	    if(in_array($groups[$usergroups[$i]],$filegroups))	$hasperm = true;
+		if(in_array($usergroups[$i]['groupid'],$filegroups))	
+		{
+			$hasperm = true;
+			break;
+		}
 	    $i++;
 	}
 	return $hasperm;
